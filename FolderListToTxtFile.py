@@ -28,7 +28,7 @@ class FileFinder:
         return output_dir
 
     def write_files_paths_to_txt_file(
-        self, input_dirs: list[str], extensions_to_check: list[str], output_dir: str
+        self, input_dirs: list[str], output_dir: str
     ) -> None:
         all_file_paths = self._find_all_files_in_directories(input_dirs)
         filtered_paths = self._filter_valid_file_extensions(all_file_paths)
@@ -103,5 +103,5 @@ if __name__ == "__main__":
     output_dir = finder.get_output_dir()
 
     finder.write_files_paths_to_txt_file(
-        input_dirs=input_dirs, extensions_to_check=extensions, output_dir=output_dir
+        input_dirs=input_dirs, output_dir=output_dir
     )
