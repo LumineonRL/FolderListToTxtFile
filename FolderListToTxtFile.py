@@ -46,33 +46,48 @@ class FileFinder:
             print("No files found.")
 
     def find_files_with_extensions_in_directories(
-        self, input_dirs: list[str]
-    ) -> list[str]:
+        self, input_dirs: list[str]) -> list[str]:
         """Finds all files with specified extensions recursively within given directories."""
         files = []
         for dir_path in input_dirs:
-            files.extend(glob.glob(os.path.join(dir_path, "**/*"), recursive=True))
-        files_filtered_by_extensions = self.get_files_with_specified_extensions(files)
+            dir_files = glob.glob(os.path.join(dir_path, "**/*"), recursive=True)
+            
+            # Only include files where extension matches one of our allowed extensions.
+            valid_files = [f for f in dir_files if self.is_file_of_specified_extension(f)]
+            
+            files.extend(valid_files)
+        
+        return files
+        
+    
+    def get_file_extension(self, file_path):
+        """
+        Returns the extension of a file (including . separator) as a string.
+        """
+        _, ext = os.path.splitext(file_path)
+        
+        return ext.lower()
+    
+    
+    def is_extension_in_list(self, extension):
+        """
+        Checks if an extension exists in our list of valid extensions.
+        Returns True or False depending on whether it exists or not. 
+        """
+        
+        return extension in self.extensions_to_check
 
-        return files_filtered_by_extensions
-
-    def get_files_with_specified_extensions(
-        self, files_list: list[str] = []
-    ) -> list[str]:
-        """Returns a list containing all files with an extension that matches one or more of the specified extensions."""
-        files_filtered = [
-            path for path in files_list if self.is_file_of_specified_extension(path)
-        ]
-
-        return files_filtered
 
     def is_file_of_specified_extension(self, file_path: str) -> bool:
-        """Checks if a given file has an extension that matches one or more of the specified extensions."""
-        file_extension = os.path.splitext(file_path)[-1].lower()
-        if file_extension in self.extensions_to_check:
-            return True
-        else:
-            return False
+            """Checks if a given file has an extension that matches one or more of the specified extensions."""
+            
+            # Get lower-cased filename extension from filepath using get_file_extension helper method.
+            ext= self.get_file_extension(file_path)
+
+            # Check whether obtained filename-extension exists in our defined set/list of allowed image-extensions.
+            result=  self.is_extension_in_list(ext)
+
+            return result
 
     def generate_output_filename_with_timestamp(self) -> str:
         """Returns an output filename with timestamp appended"""
