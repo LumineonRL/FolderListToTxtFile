@@ -27,56 +27,6 @@ class FileFinder:
             output_dir = f.readline().strip()
         return output_dir
 
-    def find_files_with_extensions_in_directories(
-        self, input_dirs: list[str]
-    ) -> list[str]:
-        """Finds all files with specified extensions recursively within given directories."""
-        files = []
-        for dir_path in input_dirs:
-            files.extend(
-                glob.glob(os.path.join(dir_path, "**/*"), recursive=True)
-            )
-        files_filtered_by_extensions = (
-            self.get_files_with_specified_extensions(files)
-        )
-
-        return files_filtered_by_extensions
-
-    def is_file_of_specified_extension(self, file_path: str) -> bool:
-        """Checks if a given file has an extension that matches one or more of the specified extensions."""
-        file_extension = os.path.splitext(file_path)[-1].lower()
-        if file_extension in self.extensions_to_check:
-            return True
-        else:
-            return False
-
-    def get_files_with_specified_extensions(
-        self, files_list: list[str] = []
-    ) -> list[str]:
-        """Returns a list containing all files with an extension that matches one or more of the specified extensions."""
-        files_filtered = [
-            path
-            for path in files_list
-            if self.is_file_of_specified_extension(path)
-        ]
-
-        return files_filtered
-
-    def write_list_to_file(self, file_list: list[str], output_path: str) -> None:
-        """Writes a list of strings to a txt file at the specified output path."""
-        with open(output_path, "w", encoding=self.encoding) as f:
-            for item in file_list:
-                encoded_item = item.encode(self.encoding)
-                decoded_item = encoded_item.decode(self.encoding)
-
-                # Finally write the decoded string onto our desired txt-file.
-                f.write("%s\n" % decoded_item)
-
-    def generate_output_filename_with_timestamp(self) -> str:
-        """Returns an output filename with timestamp appended"""
-        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return "files_" + timestamp_str + ".txt"
-
     def write_files_paths_to_txt_file(
         self, input_dirs: list[str], extensions_to_check: list[str], output_dir: str
     ) -> None:
@@ -94,6 +44,50 @@ class FileFinder:
             self.write_list_to_file(filtered_paths, output_filepath)
         else:
             print("No files found.")
+
+    def find_files_with_extensions_in_directories(
+        self, input_dirs: list[str]
+    ) -> list[str]:
+        """Finds all files with specified extensions recursively within given directories."""
+        files = []
+        for dir_path in input_dirs:
+            files.extend(glob.glob(os.path.join(dir_path, "**/*"), recursive=True))
+        files_filtered_by_extensions = self.get_files_with_specified_extensions(files)
+
+        return files_filtered_by_extensions
+
+    def get_files_with_specified_extensions(
+        self, files_list: list[str] = []
+    ) -> list[str]:
+        """Returns a list containing all files with an extension that matches one or more of the specified extensions."""
+        files_filtered = [
+            path for path in files_list if self.is_file_of_specified_extension(path)
+        ]
+
+        return files_filtered
+
+    def is_file_of_specified_extension(self, file_path: str) -> bool:
+        """Checks if a given file has an extension that matches one or more of the specified extensions."""
+        file_extension = os.path.splitext(file_path)[-1].lower()
+        if file_extension in self.extensions_to_check:
+            return True
+        else:
+            return False
+
+    def generate_output_filename_with_timestamp(self) -> str:
+        """Returns an output filename with timestamp appended"""
+        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return "files_" + timestamp_str + ".txt"
+
+    def write_list_to_file(self, file_list: list[str], output_path: str) -> None:
+        """Writes a list of strings to a txt file at the specified output path."""
+        with open(output_path, "w", encoding=self.encoding) as f:
+            for item in file_list:
+                encoded_item = item.encode(self.encoding)
+                decoded_item = encoded_item.decode(self.encoding)
+
+                # Finally write the decoded string onto our desired txt-file.
+                f.write("%s\n" % decoded_item)
 
 
 if __name__ == "__main__":
