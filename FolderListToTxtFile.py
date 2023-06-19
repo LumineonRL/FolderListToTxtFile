@@ -157,3 +157,4 @@ if __name__ == "__main__":
     my_output_directory = finder.get_output_directory()
 
     finder.write_files_paths_to_txt(my_input_directories, my_output_directory)
+    
